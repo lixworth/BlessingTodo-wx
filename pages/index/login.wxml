@@ -1,0 +1,5 @@
+<!--pages/index/login.wxml-->
+<view class="container">
+    <van-loading color="#1989fa" vertical>正在登陆</van-loading>
+</view>
+

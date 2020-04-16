@@ -7,7 +7,9 @@ Page({
     motto: 'Hello World',
     userInfo: {},
     hasUserInfo: false,
-    canIUse: wx.canIUse('button.open-type.getUserInfo')
+    canIUse: wx.canIUse('button.open-type.getUserInfo'),
+    inputShowed: false,
+    inputVal: ""
   },
   //事件处理函数
   bindViewTap: function() {
@@ -16,6 +18,10 @@ Page({
     })
   },
   onLoad: function () {
+    this.showLoading();
+    this.setData({
+      search: this.search.bind(this)
+    });
     if (app.globalData.userInfo) {
       this.setData({
         userInfo: app.globalData.userInfo,
@@ -43,12 +49,40 @@ Page({
       })
     }
   },
+  onShow() {
+    this.getTabBar().init();
+  },
   getUserInfo: function(e) {
     console.log(e)
     app.globalData.userInfo = e.detail.userInfo
     this.setData({
       userInfo: e.detail.userInfo,
       hasUserInfo: true
+    })
+  },
+  search: function (value) {
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            resolve([{text: '搜索结果', value: 1}, {text: '搜索结果2', value: 2}])
+        }, 200)
+    })
+  },
+  selectResult: function (e) {
+    console.log('select result', e.detail)
+  },
+  test: function (event) {
+    wx.navigateTo({
+          url: "../logs/logs"
+    });
+  },
+  showLoading:function(){
+    this.setData({
+      showLoading:true
+    })
+  },
+  cancelLoading:function() {
+    this.setData({
+      showLoading: false
     })
   }
 })
