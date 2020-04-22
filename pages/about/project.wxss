@@ -1,0 +1,7 @@
+/* pages/about/project.wxss */
+.project_about{
+    text-align: center;
+}
+.about_text{
+    padding-left: 10px;
+}

@@ -6,7 +6,7 @@ App({
         })
         if(wx.getStorageSync('token').trim() === ""){
             wx.removeStorageSync('token');
-            wx.reLaunch({
+            wx.redirectTo({
                 url: '/pages/index/login'
             })
         }else{
@@ -17,7 +17,7 @@ App({
                 },
                 fail () {
                     wx.removeStorageSync('token');
-                    wx.reLaunch({
+                    wx.redirectTo({
                         url: '/pages/index/login'
                     })
                     wx.hideLoading();

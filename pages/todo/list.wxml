@@ -1,0 +1,37 @@
+<view>
+    <van-sticky>
+        <van-dropdown-menu active-color="#07c160">
+            <van-dropdown-item value="{{ value1 }}" disabled="{{ showLoading }}" options="{{ option1 }}" bind:change="SwitchMenu" />
+        </van-dropdown-menu>
+    </van-sticky>
+</view>
+<view>
+    <van-tabs active="{{ active }}" animated swipeable bind:change="onChange" color="#07c160">
+        <van-tab title="全部事项" disabled="{{ showLoading }}"></van-tab>
+        <van-tab title="待办事项" disabled="{{ showLoading }}"></van-tab>
+        <van-tab title="尚未开始" disabled="{{ showLoading }}"></van-tab>
+    </van-tabs>
+</view>
+<view class="container" wx:if="{{showLoading}}">
+    <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+</view>
+
+<view wx:if="{{!showLoading}}">
+    <div class="todo" wx:for="{{showData}}" wx:for-item="item" wx:key="item.TITLE">
+        <i-card wx:for="{{item.Missions}}" wx:for-item="mission"  title="{{ mission.CONTENT }}" extra="由 {{item.MOTHER}} 创建">
+            <view slot="content">
+                <i-tag
+                        class="i-tags"
+                        type="border"
+                        color="red">
+                    计划: {{item.TITLE}}
+                </i-tag>
+                    请准时在 {{mission.TIME_START}} 到 {{mission.TIME_END}} 确认!
+            </view>
+            <view slot="footer" class="footer">
+                <van-button type="default" size="small" wx:if="{{item.creator}}">已完成：1/10</van-button>
+                <van-button type="primary" size="small" style="margin-left: 10px" wx:if="{{!item.creator}}">确认</van-button>
+            </view>
+        </i-card>
+    </div>
+</view>

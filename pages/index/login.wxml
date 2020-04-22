@@ -1,5 +1,8 @@
 <!--pages/index/login.wxml-->
 <view class="container">
-    <van-loading color="#1989fa" vertical>正在登陆</van-loading>
+    <van-loading color="#1989fa" vertical wx:if="{{showLoading}}">正在登陆</van-loading>
 </view>
 
+<view class="container" wx:if="{{!showLoading}}">
+    <button type="primary" hover-class="other-button-hover" open-type="getUserInfo" bindgetuserinfo="bindGetUserInfo"> 授权登录 </button>
+</view>

@@ -1,0 +1,20 @@
+<!--pages/about/project.wxml-->
+
+<view class="project_about">
+    <van-image
+            width="10rem"
+            height="10rem"
+            lazy-load
+            src="/assets/logo.jpg"
+    />
+</view>
+<view class="project_about">
+    Blessing Todo
+</view>
+<view class="about_text">
+    <text>
+        这是一个Todo小程序 \n 开源程序许可: \n
+        vant-weapp: https://github.com/youzan/vant-weapp/blob/dev/LICENSE \n
+        eggjs: https://github.com/eggjs/egg/blob/master/LICENSE \n
+    </text>
+</view>

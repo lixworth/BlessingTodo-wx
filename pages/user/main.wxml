@@ -1,2 +1,15 @@
 <!--pages/user/main.wxml-->
-<text>pages/user/main.wxml</text>
+<!--pages/user/main.wxml-->
+<view class="container">
+    <open-data class="user-avatar" type="userAvatarUrl"></open-data>
+    <open-data class="user-name" type="userNickName" lang="zh_CN"></open-data>
+    <button open-type='getUserInfo' lang="zh_CN" bindgetuserinfo="onGotUserInfo"></button>
+    <view class="footer" bind:tap="onTap">
+        <text>{{title}}</text>
+    </view>
+</view>
+<van-cell-group>
+    <van-cell title="单元格" value="内容" />
+    <van-cell title="单元格" value="内容" label="描述信息" border="{{ false }}" />
+    <van-cell is-link title="关于" link-type="navigateTo" url="/pages/about/project" />
+</van-cell-group>

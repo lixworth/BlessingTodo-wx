@@ -1,0 +1,10 @@
+/* pages/about/todo/list.wxss */
+.todo{
+    padding: 8rpx;
+}
+.card_todo image{
+    border-radius: 20%;
+}
+.footer{
+    text-align: right;
+}

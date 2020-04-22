@@ -1,3 +1,16 @@
+<view>
+    <van-sticky>
+        <van-dropdown-menu style="text-align: left;float: left">
+            <van-dropdown-item value="{{ value1 }}" options="{{ option1 }}" />
+            <van-dropdown-item value="{{ value2 }}" options="{{ option2 }}" />
+        </van-dropdown-menu>
+    </van-sticky>
+</view>
 <view class="container" wx:if="{{showLoading}}">
     <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+</view>
+<view class="main_content" wx:if="{{!showLoading}}">
+    <div class="calender_con">
+        <calendar calendarConfig="{{calendarConfig}}" bind:afterCalendarRender="afterCalendarRender"></calendar>
+    </div>
 </view>

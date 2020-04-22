@@ -1,30 +1,38 @@
 {
   "pages": [
+    "pages/todo/list",
     "pages/index/main",
-    "pages/index/index",
     "pages/index/login",
-    "pages/user/main"
+    "pages/user/main",
+    "pages/about/project"
   ],
   "window": {
-    "backgroundTextStyle": "light",
+    "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#fff",
     "navigationBarTitleText": "Blessing Todo",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "enablePullDownRefresh": true,
+    "onReachBottomDistance": 50
   },
   "tabBar": {
-    "custom": true,
-    "color": "#000000",
-    "selectedColor": "#000000",
-    "backgroundColor": "#000000",
     "list": [
       {
-        "pagePath": "pages/index/main"
+        "iconPath": "/assets/calendar.png",
+        "selectedIconPath": "/assets/calendar_active.png",
+        "pagePath": "pages/todo/list",
+        "text": "待办事项"
       },
       {
-        "pagePath": "pages/index/index"
+        "iconPath": "/assets/viewlist.png",
+        "selectedIconPath": "/assets/viewlist_active.png",
+        "pagePath": "pages/index/main",
+        "text": "Todo 列表"
       },
       {
-        "pagePath": "pages/user/main"
+        "iconPath": "/assets/account.png",
+        "selectedIconPath": "/assets/account_active.png",
+        "pagePath": "pages/user/main",
+        "text": "用户中心"
       }
     ]
   },

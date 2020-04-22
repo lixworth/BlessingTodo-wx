@@ -1,8 +1,0 @@
-{
-  "usingComponents": {
-    "mp-searchbar": "/miniprogram_npm/weui-miniprogram/searchbar/searchbar",
-    "van-button": "@vant/weapp/button/index",
-    "van-loading": "@vant/weapp/loading/index"
-  },
-  "navigationBarTitleText": "待办事项"
-}

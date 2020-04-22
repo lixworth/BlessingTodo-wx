@@ -1,12 +1,15 @@
 // pages/user/main.js
 Page({
   data: {
-    showLoading:true
-
+    showLoading:true,
   },
   onLoad: function (options) {
-    this.getTabBar().init();
     this.showLoading();
+  },
+  onShow: function(){
+    this.cancelLoading();
+  },
+  onHide:function(){
   },
   showLoading:function(){
     this.setData({

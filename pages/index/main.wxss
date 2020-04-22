@@ -1,0 +1,8 @@
+.calender_con {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 3 rpx 50 rpx;
+    box-sizing: border-box;
+}
