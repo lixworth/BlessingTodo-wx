@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "description": "",
   "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "scripts": {},
   "author": "LixWorth",
   "license": "ISC",
   "dependencies": {
-    "@vant/weapp": "^1.2.1",
+    "@vant/weapp": "^1.2.2",
+    "miniprogram-datepicker": "^0.3.0",
     "weui-miniprogram": "^0.2.2"
   }
 }

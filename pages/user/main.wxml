@@ -1,15 +1,28 @@
 <!--pages/user/main.wxml-->
 <!--pages/user/main.wxml-->
-<view class="container">
-    <open-data class="user-avatar" type="userAvatarUrl"></open-data>
-    <open-data class="user-name" type="userNickName" lang="zh_CN"></open-data>
-    <button open-type='getUserInfo' lang="zh_CN" bindgetuserinfo="onGotUserInfo"></button>
-    <view class="footer" bind:tap="onTap">
-        <text>{{title}}</text>
-    </view>
+<view class="container" wx:if="{{showLoading}}">
+    <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
 </view>
-<van-cell-group>
-    <van-cell title="单元格" value="内容" />
-    <van-cell title="单元格" value="内容" label="描述信息" border="{{ false }}" />
-    <van-cell is-link title="关于" link-type="navigateTo" url="/pages/about/project" />
-</van-cell-group>
+<view wx:if="{{!showLoading}}">
+    <view class="user_container">
+        <open-data class="user-avatar" type="userAvatarUrl"></open-data>
+        <open-data class="user-name" type="userNickName" lang="zh_CN"></open-data>
+        <button open-type='getUserInfo' lang="zh_CN" bindgetuserinfo="onGotUserInfo"></button>
+        <view class="footer" bind:tap="onTap">
+            <text>{{title}}</text>
+        </view>
+    </view>
+    <van-cell-group>
+        <van-cell title="版本" value="0.0.1-alpha-bugdhdj" />
+        <van-cell title="消息通知">
+            <van-switch checked="{{ checked }}" size="24px"/>
+        </van-cell>
+        <van-cell is-link title="关于" link-type="navigateTo" url="/pages/about/project" />
+    </van-cell-group>
+    <van-cell-group title="API">
+        <van-cell title="API地址" value="{{api}}" />
+        <van-cell title="版本" value="{{result.GKD_TM_API_version}}" />
+        <van-cell title="已用内存" value="{{result.memory_peak_usage}}" />
+        <van-cell title="延迟" value="{{result.req_processing_delay}}" />
+    </van-cell-group>
+</view>

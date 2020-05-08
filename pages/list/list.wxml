@@ -1,0 +1,53 @@
+<view>
+    <van-sticky>
+        <van-dropdown-menu active-color="#07c160">
+            <van-dropdown-item value="{{ value1 }}" disabled="{{ showLoading }}" options="{{ option1 }}" bind:change="SwitchMenu" />
+        </van-dropdown-menu>
+    </van-sticky>
+</view>
+<view>
+    <van-sticky>
+        <van-tabs  active="{{ active }}" animated swipeable bind:change="TabChange" color="#07c160">
+            <van-tab title="待办事项" disabled="{{ showLoading }}" value="0"></van-tab>
+            <van-tab title="全部事项" disabled="{{ showLoading }}" value="1"></van-tab>
+            <van-tab title="尚未开始" disabled="{{ showLoading }}" value="2"></van-tab>
+        </van-tabs>
+    </van-sticky>
+
+</view>
+<view class="container" wx:if="{{showLoading}}">
+    <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+</view>
+
+<view wx:if="{{!showLoading}}">
+    <div class="todo" wx:for="{{showData}}" wx:for-item="item" wx:key="item.TITLE">
+        <i-card wx:for="{{item.Missions}}" wx:for-item="mission"  title="{{ mission.CONTENT }}" extra="由 {{item.MOTHER}} 创建">
+            <view slot="content">
+                <i-tag
+                        class="i-tags"
+                        type="border"
+                        color="red">
+                    计划: {{item.TITLE}}
+                </i-tag>
+                <i-tag
+                        class="i-tags"
+                        type="border"
+                        wx:if="{{item.is_father}}"
+                        color="orange">
+                    监督职务
+                </i-tag>
+
+                请准时在 {{mission.TIME_START}} 到 {{mission.TIME_END}} 确认!
+            </view>
+            <view slot="footer" class="footer">
+                <van-button type="default" size="small" wx:if="{{mission.IS_COMPLETED}}">已完成</van-button>
+                <van-button type="warning" size="small" style="margin-left: 10px" wx:if="{{!mission.if_start}}">尚未开始</van-button>
+                <van-button type="danger" size="small" style="margin-left: 10px" wx:if="{{mission.is_outtime}}">已超时</van-button>
+                <van-button type="primary" size="small" style="margin-left: 10px" disabled="{{btn_loading}}" loading="{{btn_loading}}" wx:if="{{!mission.IS_COMPLETED && mission.if_start && !item.is_father}}" bindtap="makeSure" data-mid="{{mission.MID}}">确认</van-button>
+            </view>
+        </i-card>
+    </div>
+    <view class="list_container">
+        (⌯'ㅅ'⌯) 暂时并没有其他待办事项了~
+    </view>
+</view>

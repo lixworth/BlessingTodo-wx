@@ -1,16 +1,150 @@
 <view>
-    <van-sticky>
-        <van-dropdown-menu style="text-align: left;float: left">
-            <van-dropdown-item value="{{ value1 }}" options="{{ option1 }}" />
-            <van-dropdown-item value="{{ value2 }}" options="{{ option2 }}" />
-        </van-dropdown-menu>
-    </van-sticky>
+    <van-notice-bar wrapable scrollable="false" text="{{yiyan}}" backgroundColor="white"/>
+</view>
+<view style="padding: 15rpx;">
+    <van-row gutter="24">
+        <van-col span="12">
+            <van-button  icon="add-o" type="primary" block bind:click="showNew">新建TODO</van-button>
+        </van-col>
+        <van-col span="12">
+            <van-button icon="friends-o" type="primary" block bind:click="showPopup" >加入TODO</van-button>
+        </van-col>
+    </van-row>
+
+</view>
+
+<view>
+    <van-cell-group title="已加入的Todo">
+        <div wx:if="{{!showLoading}}" wx:for="{{showData}}" wx:for-item="item" style="padding:8rpx">
+            <i-card title="{{item.TITLE}}">
+                <view slot="content">
+                    <van-tag type="success">创建者: {{item.MOTHER}}</van-tag>
+                    {{item.CONTENT}}
+                    <text>\t\t\t</text><van-button bind:click="clickMore" id="{{item.TID}}" type="default" size="mini" plain >查看更多</van-button><text>\n</text>
+                </view>
+                <view slot="footer">
+                    <van-tag type="primary">创建于: {{item.TIME_CREATED}}</van-tag>   <text>\t</text>
+                    <van-tag type="danger">结束时间: {{item.TIME_END}}</van-tag>
+                </view>
+            </i-card>
+        </div>
+    </van-cell-group>
 </view>
 <view class="container" wx:if="{{showLoading}}">
     <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
 </view>
-<view class="main_content" wx:if="{{!showLoading}}">
-    <div class="calender_con">
-        <calendar calendarConfig="{{calendarConfig}}" bind:afterCalendarRender="afterCalendarRender"></calendar>
-    </div>
+
+<view>
+    <van-popup
+            show="{{ show }}"
+            position="bottom"
+            custom-style="height: 45%;"
+            bind:close="onClose"
+            closeable
+            round
+    >
+        <view class="container" wx:if="{{loadLoading}}">
+            <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+        </view>
+        <div class="pop_container" wx:if="{{!loadLoading}}">
+            <van-cell-group title="自动输入">
+                <div class="main_container">
+                    <van-button type="primary" bind:click="scanCode">扫描二维码</van-button>
+                </div>
+            </van-cell-group>
+            <van-cell-group title="手动输入分享码">
+                <van-field
+                        value="{{ load_cid }}"
+                        center
+                        clearable
+                        label="分享码"
+                        placeholder="请输入分享码"
+                        type="number"
+                        border="{{ false }}"
+                        use-button-slot
+                        bind:input="changeCode"
+                >
+                    <van-button slot="button" size="small" type="primary" bind:click="loadCode">提交</van-button>
+                </van-field>
+            </van-cell-group>
+
+        </div>
+    </van-popup>
+</view>
+
+<view>
+    <van-popup
+            show="{{ new }}"
+            position="bottom"
+            custom-style="height: 100%;"
+            bind:close="onClose"
+            closeable
+    >
+        <view class="container" wx:if="{{newLoading}}">
+            <van-loading size="24px" vertical color="#1989fa" >正在提交...</van-loading>
+        </view>
+        <div class="pop_container" wx:if="{{!newLoading}}">
+            <van-cell-group title="基本内容">
+                <van-field
+                        value="{{ newTodo.title }}"
+                        type="text"
+                        label="标题"
+                        placeholder="Todo标题"
+                        bind:input="changeTitle"
+                />
+                <van-field
+                        value="{{ newTodo.content }}"
+                        type="text"
+                        label="内容"
+                        placeholder="简单介绍一下Todo吧"
+                        bind:input="changeContent"
+                />
+            </van-cell-group>
+            <van-divider contentPosition="center" customStyle="color: #07c160;border-color: #07c160;font-size: 18px;">任务列表</van-divider>
+            <div wx:for="{{newTodo.todo}}" wx:for-item="todo" wx:for-index="index">
+                <van-cell-group title="任务NO.{{index+1}}">
+                    <van-field
+                            id="{{index}}"
+                            value="{{ todo.content }}"
+                            type="text"
+                            label="任务名称"
+                            bind:change="changeTodoContent"
+                            placeholder="简要描述这个任务的内容"
+                    />
+                    <datepicker id="{{index}}" value="{{todo.solar}}" bindchange="bindSolarChange">
+                        <van-cell title="选择日期" is-link  value="{{todo.solar}}" />
+                    </datepicker>
+                    <van-cell id="{{index}}" title="选择开始时间" is-link bind:click="showTime" value="{{todo.currentDate}}"/>
+                    <van-popup id="{{index}}" show="{{ todo.show }}" bind:close="onCloseTime" position="bottom">
+                        <van-datetime-picker
+                                type="time"
+                                id="{{index}}"
+                                value="{{ todo.currentDate }}"
+                                bind:confirm="onInputTime"
+                                bind:cancel="onCloseTime"
+                        />
+                    </van-popup>
+                    <van-field
+                            id="{{index}}"
+                            value="{{ todo.time }}"
+                            type="number"
+                            bind:change="changeTodoTime"
+                            label="持续时间"
+                            placeholder="超过期限时间，会通知督促人 (单位分钟)"
+                    />
+                    <van-cell
+                            is-link
+                            id="{{index}}"
+                            wx:if="{{ index != 0}}"
+                            title="删除本条任务"
+                            bind:click="delectTask"
+                    />
+                </van-cell-group>
+            </div>
+            <div class="btn_container">
+                <van-button type="default" bind:click="newTask">任务+1</van-button> <text>\t \n\n</text>
+                <van-button type="primary" block bind:click="newTodo" disabled="{{new_btn}}" loading="{{new_btn}}">提交</van-button>
+            </div>
+        </div>
+    </van-popup>
 </view>

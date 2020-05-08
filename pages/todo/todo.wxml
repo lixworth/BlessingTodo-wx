@@ -1,0 +1,76 @@
+<view class="container" wx:if="{{showLoading}}">
+    <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+</view>
+<view wx:if="{{!showLoading}}">
+    <van-cell-group title="基础信息">
+        <van-cell title="TodoID" value="{{tid}}" />
+        <van-cell title="标题" value="{{showData.TITLE}}" />
+        <van-cell title="内容" value="{{showData.CONTENT}}" />
+        <van-cell title="邀请码" label="可用于快速加入Todo" is-link value="申请二维码及邀请码" bind:click="getYQCode" wx:if="{{showData.is_creator}}" />
+        <van-cell title="督促码" label="邀请别人成为你的监督人" is-link value="申请二维码及邀请码" bind:click="getDCCode" />
+        <van-popup
+                wx:if="{{showData.is_creator}}"
+                show="{{ YQShow }}"
+                closeable
+                position="bottom"
+                custom-style="height: 50%"
+                bind:close="CloseYQ"
+        >
+            <view class="container" wx:if="{{YQLoading}}">
+                <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+            </view>
+            <view class="pop_container" wx:if="{{!YQLoading}}">
+                <text>邀请码：{{ cid }}</text>
+                <component-qrcode isDraw="{{cid}}"></component-qrcode>
+                <van-button plain type="primary" bind:click="clickCopy">点我复制到剪切板</van-button>
+            </view>
+        </van-popup>
+        <van-popup
+                show="{{ DCShow }}"
+                closeable
+                position="bottom"
+                custom-style="height: 50%"
+                bind:close="CloseDC"
+        >
+            <view class="container" wx:if="{{DCLoading}}">
+                <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+            </view>
+            <view class="pop_container" wx:if="{{!DCLoading}}">
+                <text>督促码：{{ cid }}</text>
+                <component-qrcode isDraw="{{cid}}"></component-qrcode>
+                <van-button plain type="primary" bind:click="clickCopy">点我复制到剪切板</van-button>
+            </view>
+        </van-popup>
+        <van-cell title="创建者" label="{{showData.MOTHER.name}}">
+            <van-image
+            round
+            width="70rpx"
+            height="70rpx"
+            src="{{showData.MOTHER.avatar}}"
+            />  
+        </van-cell>
+    </van-cell-group>
+    <van-cell-group title="Todo成员">
+        <div wx:for="{{showData.SONs}}" wx:for-item="son" >
+            <van-cell title="{{son.name}}" label="监督人:无"> 
+                <van-image
+                round
+                width="70rpx"
+                height="70rpx"
+                src="{{son.avatar}}"
+                />  
+            </van-cell>
+        </div>
+    </van-cell-group>
+    <van-cell-group title="任务列表">
+        <van-cell wx:for="{{ showData.Missions }}" wx:for-item="mission" wx:for-index="index" style="float: left!important;">
+            <div>
+                <van-tag type="danger" wx:if="{{!mission.IS_COMPLETED && mission.if_start}}">未完成</van-tag> <text>\t\t</text>
+                <van-tag type="danger" wx:if="{{!mission.if_start}}">尚未开始</van-tag> <text>\t\t</text>
+                <van-tag>NO.{{index+1}}</van-tag> <text style="color:blue">\t [ {{mission.TIME_START}} ~ {{mission.TIME_END}} ] \t </text>
+                {{mission.CONTENT}}
+                <van-divider />
+            </div>
+        </van-cell>
+    </van-cell-group>
+</view>

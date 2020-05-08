@@ -1,42 +1,370 @@
+const app = getApp();
+const date = new Date();
 Page({
     data: {
+        yiyan: "用代码表达言语的魅力，用代码书写山河的壮丽。—— 『一言』",
         showLoading:true,
-        option1: [
-            { text: '全部事项', value: 0 },
-            { text: '计划A', value: 1 },
-            { text: '计划B', value: 2 }
-        ],
-        option2: [
-            { text: '全部显示', value: 'a' },
-            { text: '未完成', value: 'b' },
-            { text: '已完成', value: 'c' }
-        ],
-        value1: 0,
-        value2: 'a',
-        calendarConfig: {
-            multi: true, // 是否开启多选,
-            theme: 'elegant', // 日历主题，目前共两款可选择，默认 default 及 elegant，自定义主题在 theme 文件夹扩展
-            showLunar: true, // 是否显示农历，此配置会导致 setTodoLabels 中 showLabelAlways 配置失效
-            inverse: false, // 单选模式下是否支持取消选中,
-            chooseAreaMode: true, // 开启日期范围选择模式，该模式下只可选择时间段
-            markToday: '今', // 当天日期展示不使用默认数字，用特殊文字标记
-            defaultDay: false, // 默认选中指定某天；当为 boolean 值 true 时则默认选中当天，非真值则在初始化时不自动选中日期，
-            highlightToday: true, // 是否高亮显示当天，区别于选中样式（初始化时当天高亮并不代表已选中当天）
-            takeoverTap: true, // 是否完全接管日期点击事件（日期不会选中），配合 onTapDay() 使用
-            preventSwipe: false, // 是否禁用日历滑动切换月份
-            firstDayOfWeek: 'Mon', // 每周第一天为周一还是周日，默认按周日开始
-            onlyShowCurrentMonth: true, // 日历面板是否只显示本月日期
-            hideHeadOnWeekMode: false, // 周视图模式是否隐藏日历头部
-            showHandlerOnWeekMode: true, // 周视图模式是否显示日历头部操作栏，hideHeadOnWeekMode 优先级高于此配置
-        }
+        activeNames: [],
+        showData: [],
+        show: false,
+        new: false,
+        error: false,
+        newLoading: false,
+        loadLoading: false,
+        load_cid: null,
+        newTodo: {
+            title: null,
+            content: null,
+            todo: [
+                {
+                    content: null,
+                    currentDate: null,
+                    solar: null,
+                    time: null,
+                    show: false,
+                }
+            ]
+        },
+        new_btn: false,
     },
     onLoad: function (options) {
+        wx.hideLoading();
         this.showLoading();
-        //Pull data
+        var date = new Date();
+        var minu = date.getMinutes()
+        if (date.getMinutes() < 10) minu = "0" + minu;
+        var todo = this.data.newTodo;
+        todo.todo[0].currentDate = date.getHours()+":"+minu;
+        this.setData({
+            newTodo: todo
+        });
+        try {
+            if (app.globalData.api && app.globalData.api != '') {
+                this.refresh();
+            }
+        } catch(error) {
+
+        }
+    },
+    onInput(event) {
+        this.setData({
+            currentDate: event.detail
+        });
+    },
+
+    bindSolarChange(event){
+        var data = this.data.newTodo;
+        data.todo[event.target.id].solar = event.detail.value;
+        this.setData({
+            newTodo: data
+        });
+    },
+    changeContent(event){
+        var data = this.data.newTodo;
+        data.content = event.detail;
+        this.setData({
+            newTodo: data
+        });
+    },
+    changeCode(event){
+        console.log("event.detail")
+        this.setData({
+            load_cid: event.detail
+        });
+    },
+    loadCode(){
+        this.setData({
+            loadLoading: true
+        });
+        var app = getApp();
+        if(wx.getStorageSync('token').trim() === ""){
+            wx.switchTab({
+                url: '/pages/login/login'
+            });
+        }
+        const token = wx.getStorageSync('token');
+        wx.showNavigationBarLoading();
+        wx.request({
+            url: app.globalData.api+"loadCode?cid="+this.data.load_cid,
+            method: "GET",
+            header:{
+                "content-type":"application/json",
+                "authorization": token
+            },
+            success:(res) => {
+                if(res.statusCode === 401){
+                    wx.removeStorageSync('token');
+                    wx.redirectTo({
+                        url: '/pages/login/login'
+                    })
+                }
+                if(res.data.status === 1){
+                    wx.navigateTo({
+                        url: '/pages/invite/index?cid='+this.data.load_cid
+                    });
+                }else{
+                    wx.showToast({
+                        title: '邀请码不可用',
+                        icon: 'none',
+                        duration: 2000
+                    });
+                    this.setData({
+                        loadLoading: false,
+                        show: false
+                    });
+                }
+            },
+            fail(res) {
+                wx.showToast({
+                    title: '加载失败',
+                    icon: 'none',
+                    duration: 2000
+                });
+                this.setData({
+                    loadLoading: false,
+                    show: false
+                });
+            }
+        });
+    },
+    changeTitle(event){
+        console.log(event)
+        var data = this.data.newTodo;
+        data.title = event.detail;
+        this.setData({
+            newTodo: data
+        });
+    },
+    changeTodoContent(event) {
+        console.log(event)
+        var data = this.data.newTodo;
+        data.todo[event.target.id].content = event.detail;
+        this.setData({
+            newTodo: data
+        });
+        this.onCloseTime(event)
+    },
+    changeTodoTime(event) {
+        if(event.detail == null){
+            var data = this.data.newTodo;
+            data.todo[event.target.id].time = event.detail;
+            this.setData({
+                newTodo: data
+            });
+        }else{
+            if(event.detail > 1 && event.detail%1 === 0){
+                var data = this.data.newTodo;
+                data.todo[event.target.id].time = event.detail;
+                this.setData({
+                    newTodo: data
+                });
+            }else{
+                wx.showToast({
+                    title: '持续时间需为大于1的整数',
+                    icon: 'none',
+                    duration: 1000
+                });
+            }
+        }
 
     },
+    newTask(){
+        var data = this.data.newTodo;
+        var date = new Date();
+        var minu = date.getMinutes()
+        if (date.getMinutes() < 10) minu = "0" + minu;
+        data.todo.push({
+            content: null,
+            currentDate: date.getHours()+":"+minu,
+            solar: null,
+            time: null,
+            show: false
+        });
+        this.setData({
+            newTodo: data
+        });
+    },
+    onInputTime(event) {
+        console.log(event)
+        var data = this.data.newTodo;
+        data.todo[event.target.id].currentDate = event.detail;
+        this.setData({
+            newTodo: data
+        });
+        this.onCloseTime(event)
+    },
+    onCloseTime(event){
+        var data = this.data.newTodo;
+        data.todo[event.target.id].show = false;
+        this.setData({
+            newTodo: data
+        });
+    },
+    showTime(event){
+        var data = this.data.newTodo;
+        data.todo[event.target.id].show = true;
+        this.setData({
+            newTodo: data
+        });
+    },
+    delectTask(event){
+        console.log(event)
+        var data = this.data.newTodo;
+        console.log(event.target.id)
+        data.todo.splice(event.target.id,1);
+        this.setData({
+            newTodo: data
+        });
+    },
     onShow: function(){
+        // this.cancelLoading();
+    },
+    scanCode(){
+        wx.scanCode({
+            success: (res) => {
+                this.setData({
+                    loadLoading: true
+                });
+                var app = getApp();
+                if(wx.getStorageSync('token').trim() === ""){
+                    wx.switchTab({
+                        url: '/pages/login/login'
+                    });
+                }
+                const token = wx.getStorageSync('token');
+                wx.showNavigationBarLoading();
+                wx.request({
+                    url: app.globalData.api+"loadCode?cid="+res.result,
+                    method: "GET",
+                    header:{
+                        "content-type":"application/json",
+                        "authorization": token
+                    },
+                    success:(res) => {
+                        if(res.statusCode === 401){
+                            wx.removeStorageSync('token');
+                            wx.redirectTo({
+                                url: '/pages/login/login'
+                            })
+                        }
+                        if(res.data.status === 1){
+                            wx.navigateTo({
+                                url: '/pages/invite/index?cid='+res.result
+                            });
+                        }else{
+                            wx.showToast({
+                                title: '邀请码不可用',
+                                icon: 'none',
+                                duration: 2000
+                            });
+                            this.setData({
+                                loadLoading: false,
+                                show: false
+                            });
+                        }
+                    },
+                    fail(res) {
+                        wx.showToast({
+                            title: '加载失败',
+                            icon: 'none',
+                            duration: 2000
+                        });
+                        this.setData({
+                            loadLoading: false,
+                            show: false
+                        });
+                    }
+                });
+            },
+            fail(res) {
+                wx.showToast({
+                    title: '加载失败',
+                    icon: 'none',
+                    duration: 2000
+                });
+                this.setData({
+                    loadLoading: false,
+                    show: false
+                });
+            }
+        })
+
+
+    },
+    showPopup() {
+        this.setData({ show: true });
+    },
+    showNew() {
+        this.setData({ new: true });
+    },
+    onClose() {
+        if(this.data.newLoading === true){
+            this.setData({ show: false });
+        }else{
+            this.setData({ show: false,new: false });
+        }
+    },
+    refresh(){
+        var app = getApp();
+        if(wx.getStorageSync('token').trim() === ""){
+            wx.switchTab({
+                url: '/pages/login/login'
+            });
+        }
+        const token = wx.getStorageSync('token');
+        wx.showNavigationBarLoading();
+        wx.request({
+            url: app.globalData.api+"list",
+            method: "GET",
+            header:{
+                "content-type":"application/json",
+                "authorization": token
+            },
+            success:(res) => {
+                if(res.statusCode === 401){
+                    wx.removeStorageSync('token');
+                    wx.redirectTo({
+                        url: '/pages/login/login'
+                    })
+                }
+                this.setData({
+                    showData: null
+                });
+                this.setData({
+                    showData: res.data.message.all
+                });
+            },
+            fail(res) {
+                wx.showToast({
+                    title: '加载失败',
+                    icon: 'none',
+                    duration: 2000
+                });
+            },
+            complete: (res) => {
+                wx.hideNavigationBarLoading(); //完成停止加载图标
+                wx.stopPullDownRefresh();
+            }
+        });
         this.cancelLoading();
+        wx.request({
+            url: app.globalData.api+"yiyan",
+            method: 'GET',
+            success: (res) => {
+                if(res.data.from_who === null){
+                    this.setData({
+                        yiyan: "“"+res.data.hitokoto+"” ——『"+res.data.from+"』"
+                    });
+                }else{
+                    this.setData({
+                        yiyan: "“"+res.data.hitokoto+"” —— "+res.data.from_who+"『"+res.data.from+"』"
+                    });
+                }
+            }
+        })
+    },
+    onPullDownRefresh: function(){
+        this.refresh();
     },
     showLoading:function(){
         this.setData({
@@ -48,26 +376,135 @@ Page({
             showLoading: false
         })
     },
-    afterCalendarRender(e) {
-        this.calendar.setTodoLabels({
-            // 待办点标记设置
-            pos: 'bottom', // 待办点标记位置 ['top', 'bottom']
-            dotColor: '#40', // 待办点标记颜色
-            circle: true, // 待办圆圈标记设置（如圆圈标记已签到日期），该设置与点标记设置互斥
-            showLabelAlways: true, // 点击时是否显示待办事项（圆点/文字），在 circle 为 true 及当日历配置 showLunar 为 true 时，此配置失效
-            days: [
-                {
-                    year: 2020,
-                    month: 4,
-                    day: 1,
-                    todoText: '待办'
-                },
-                {
-                    year: 2020,
-                    month: 4,
-                    day: 15
-                }
-            ]
+    onChange(event) {
+        this.setData({
+            activeNames: event.detail
         });
+    },
+    clickMore(tid){
+        console.log(tid)
+        wx.showLoading({
+            title: '加载中',
+        })
+        wx.navigateTo({
+            url: '/pages/todo/todo?tid='+tid.currentTarget.id,
+            success: (res) => {
+                wx.hideLoading();
+            }
+        })
+    },
+    newTodo(event){
+        this.showLoading();
+        console.log(this.data.newTodo)
+        var newtodo = this.data.newTodo;
+        this.setData({
+            new_btn: true,
+            newLoading: true,
+        });
+        /* 开始验证数据 */
+        if(newtodo.title === null || newtodo.content === null){
+            wx.showToast({
+                title: "请全部填写完整",
+                icon: 'none',
+                duration: 2000
+            });
+            this.setData({
+                new_btn: false,
+                newLoading: false,
+            });
+        }else{
+            var tasks = newtodo.todo;
+            var error = false;
+            tasks.forEach((item,index) => {
+                if(item.content === null || item.solar === null || item.time === null){
+                    error = true;
+                }
+                if(item.time > 1 && item.time%1 === 0){
+                }else{
+                    error = true;
+                }
+            });
+            if(error === true){
+                wx.showToast({
+                    title: "所填信息有错误",
+                    icon: 'none',
+                    duration: 2000
+                });
+                this.setData({
+                    new_btn: false,
+                    newLoading: false,
+                });
+            }else{
+                var app = getApp();
+                if(wx.getStorageSync('token').trim() === ""){
+                    wx.switchTab({
+                        url: '/pages/login/login'
+                    });
+                }
+                const token = wx.getStorageSync('token');
+                wx.showNavigationBarLoading();
+                wx.request({
+                    url: app.globalData.api+"newTodo",
+                    method: "POST",
+                    header:{
+                        "content-type":"application/json",
+                        "authorization": token
+                    },
+                    data: {
+                        new: newtodo
+                    },
+                    success:(res) => {
+                        if(res.data.status === 1){
+                            wx.showToast({
+                                title: '添加成功',
+                                icon: 'success',
+                                duration: 2000
+                            });
+                            this.refresh();
+                            this.setData({
+                                new_btn: false,
+                                newLoading: false,
+                                new: false,
+                                newTodo: {
+                                    title: null,
+                                    content: null,
+                                    todo: [
+                                        {
+                                            content: null,
+                                            currentDate: null,
+                                            solar: null,
+                                            time: null,
+                                            show: false,
+                                        }
+                                    ]
+                                }
+                            });
+                        }else{
+                            wx.showToast({
+                                title: '提交失败',
+                                icon: 'none',
+                                duration: 2000
+                            });
+                            this.setData({
+                                new_btn: false,
+                                newLoading: false,
+                            });
+                        }
+
+                    },
+                    fail:() => {
+                        wx.showToast({
+                            title: '加载失败',
+                            icon: 'none',
+                            duration: 2000
+                        });
+                        this.setData({
+                            new_btn: false,
+                            newLoading: false,
+                        });
+                    }
+                });
+            }
+        }
     }
 });

@@ -1,0 +1,25 @@
+<view class="container" wx:if="{{showLoading}}">
+    <van-loading size="24px" vertical color="#1989fa" >加载中...</van-loading>
+</view>
+
+<view wx:if="{{!showLoading}}">
+    <mp-msg type="info" title="邀请确认">
+        <view slot="desc" wx:if="{{!dc_code}}">根据邀请码，您将加入由 {{ data.t.MOTHER}} 所创建的 [ {{ data.t.TITLE }} ] 的Todo</view>
+        <view slot="desc" wx:if="{{dc_code}}">根据督促码，您将加入由 {{ data.t.MOTHER}} 所创建的 [ {{ data.t.TITLE }} ] 的Todo，并监督与查看 {{ data.c.user.nickname}} 的确认情况</view>
+        <view slot="extend">
+            <view>Todo内容: {{data.t.CONTENT}}</view>
+            <view>创建时间：{{data.t.TIME_CREATED}}</view>
+            <view>结束时间：{{data.t.TIME_END}}</view>
+        </view>
+        <view slot="handle">
+            <button class="weui-btn" type="primary" bindtap="makeSure">确认</button>
+            <button class="weui-btn" type="default" bindtap="returnBack">返回</button>
+        </view>
+        <view slot="footer">
+            <view class="weui-footer__links">
+                <navigator url="/pages/index/main" class="weui-footer__link">It's Time Todo</navigator>
+            </view>
+            <view class="weui-footer__text">Copyright © 2020 lixworth</view>
+        </view>
+    </mp-msg>
+</view>

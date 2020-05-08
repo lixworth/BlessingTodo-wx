@@ -1,5 +1,17 @@
+.user_container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    padding: 60rpx 0;
+    box-sizing: border-box;
+    background-image: url("http://i0.hdslb.com/bfs/space/cb1c3ef50e22b6096fde67febe863494caefebad.png");
+    background-repeat:no-repeat;
+    background-position: center;
+}
 .user-name {
-    color: #647494;
+    color: white;
     margin-top: 10rpx;
     font-size: 32rpx;
     font-weight: bold;

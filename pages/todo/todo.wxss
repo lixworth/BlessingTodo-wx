@@ -1,0 +1,9 @@
+.pop_container{
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 40rpx 0;
+    box-sizing: border-box;
+}

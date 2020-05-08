@@ -1,15 +1,17 @@
 {
   "pages": [
-    "pages/todo/list",
+    "pages/login/login",
     "pages/index/main",
-    "pages/index/login",
+    "pages/list/list",
     "pages/user/main",
-    "pages/about/project"
+    "pages/todo/todo",
+    "pages/about/project",
+    "pages/invite/index"
   ],
   "window": {
     "backgroundTextStyle": "dark",
     "navigationBarBackgroundColor": "#fff",
-    "navigationBarTitleText": "Blessing Todo",
+    "navigationBarTitleText": "It's Time Todo",
     "navigationBarTextStyle": "black",
     "enablePullDownRefresh": true,
     "onReachBottomDistance": 50
@@ -19,7 +21,7 @@
       {
         "iconPath": "/assets/calendar.png",
         "selectedIconPath": "/assets/calendar_active.png",
-        "pagePath": "pages/todo/list",
+        "pagePath": "pages/list/list",
         "text": "待办事项"
       },
       {
